@@ -1,5 +1,5 @@
 import express from "express";
-import { addItemToCart, GetActiveCartForUser } from "../services/cartService";
+import { addItemToCart, GetActiveCartForUser, updatedItemInCart,deleteItemInCart, clearCart } from "../services/cartService";
 import validateJwt from "../middlewares/validateJWT";
 import { ExtendRequest } from "../types/extendedRequest";
 
@@ -19,6 +19,12 @@ router.get(
 },
 );
 
+router.delete("/", validateJwt, async (req: ExtendRequest, res) => {
+    const userId = req?.user?._id;
+    const response = await clearCart({ userId })
+    res.status(response.statusCode).send(response.data);
+})
+
 
 router.post('/items',validateJwt,async(req: ExtendRequest,res) =>{
     const userId = req?.user?._id;
@@ -29,11 +35,26 @@ router.post('/items',validateJwt,async(req: ExtendRequest,res) =>{
 })
 
 
+router.put("/items" , validateJwt,async(req:ExtendRequest,res)=>{
+    const userId = req?.user?._id;
+    const {productId,quantity} = req.body;
+    const response = await updatedItemInCart({userId, productId, quantity});
+    res.status(response.statusCode).send(response.data);
+});
 
 
+router.delete("/items/:productId", validateJwt, async (req: ExtendRequest, res)=> {
+    const userId = req?.user?._id;
+    const { productId } = req.params;
+    const response = await deleteItemInCart({ userId, productId });
+    res.status(response.statusCode).send(response.data);
+
+
+})
 
 
 
 
 
 export default router;
+
