@@ -52,10 +52,6 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
 
     const addItemToCart = async (productId :string) => {
         try{
-           
-            // Log the productId and token
-        console.log("Adding product with ID:", productId);
-        console.log("User Token:", token);
 
             const response = await fetch (`${BASE_URL}/cart/items`,{
                 method:"POST",
@@ -71,18 +67,6 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
                 }),
             });
 
-  // Log the response status and body
-  console.log("Response Status:", response.status);
-  const responseData = await response.json();
-  console.log("Response Data:", responseData);
-
-
-  if (!response.ok) {
-    setError(responseData.data);
-    return;
-}
-
-/*
             if(!response.ok){
                 setError('Failed to add to cart');
             }
@@ -90,9 +74,9 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
             const cart = await response.json();
 
             if(!cart) {
-                setError ("Failed to parse cart data")
+                setError("Failed to parse cart data")
             }
-*/
+
             const cartItemsMapped = cart.items.map(
                 
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -114,11 +98,104 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
 
     };
 
+    const updateItemInCart = async (productId: string, quantity: number) => {
+
+      try{
+
+        const response = await fetch (`${BASE_URL}/cart/items`,{
+            method:"PUT",
+            headers: {
+                'content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+
+            },
+            body: JSON.stringify({
+                productId,
+                quantity,
+               
+            }),
+        });
+
+        if(!response.ok){
+            setError('Failed to update to cart');
+        }
+
+        const cart = await response.json();
+
+        if(!cart) {
+            setError("Failed to parse cart data")
+        }
+
+        const cartItemsMapped = cart.items.map(
+            
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ({product, quantity, unitPrice}:{product: any; quantity:number; unitPrice:number}) => ({
+            productId: product._id, 
+            title: product.title,
+            image: product.image,
+            quantity,
+            unitPrice,
+        })
+    );
+
+        setCartItems([...cartItemsMapped]);
+        setTotalAmount(cart.totalAmount)
+    } catch (error){
+        console.error(error);
+        
+    };
+
+    }
+
+    const removeItemInCart = async (productId:string) => {
+        
+      try{
+
+        const response = await fetch (`${BASE_URL}/cart/items/${productId}`,{
+            method:"DELETE",
+            headers: {
+                'content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+
+            },
+           
+        });
+
+        if(!response.ok){
+            setError('Failed to delete to cart');
+        }
+
+        const cart = await response.json();
+
+        if(!cart) {
+            setError("Failed to parse cart data")
+        }
+
+        const cartItemsMapped = cart.items.map(
+            
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ({product, quantity, unitPrice}:{product: any; quantity:number; unitPrice:number}) => ({
+            productId: product._id, 
+            title: product.title,
+            image: product.image,
+            quantity,
+            unitPrice,
+        })
+    );
+
+        setCartItems([...cartItemsMapped]);
+        setTotalAmount(cart.totalAmount)
+    } catch (error){
+        console.error(error);
+        
+    };
+    }
+
 
 
 
     return (
-        <CartContext.Provider value={{ cartItems, totalAmount, addItemToCart }}>
+        <CartContext.Provider value={{ cartItems, totalAmount, addItemToCart, updateItemInCart, removeItemInCart }}>
           {children}
         </CartContext.Provider>
       );
