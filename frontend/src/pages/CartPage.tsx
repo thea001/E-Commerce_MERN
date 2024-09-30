@@ -4,10 +4,11 @@ import Button from "@mui/material/Button"
 import ButtonGroup from "@mui/material/ButtonGroup"
 import Container from "@mui/material/Container";
 import { useCart } from "../context/Cart/CartContext";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const {cartItems, totalAmount, updateItemInCart, removeItemInCart,clearCart} = useCart();
-
+  const Navigate = useNavigate();
 
   const handleQuantity = (productId: string, quantity: number) => {
     if(quantity <= 0) {
@@ -20,16 +21,13 @@ const CartPage = () => {
   const handleRemoveItem = (productId: string) => {
     removeItemInCart(productId)
   }
-
   
+  const handleCheckOut = () => {
+    Navigate("/checkout")
+  }
 
-  return (
-    <Container fixed sx={{ mt: 2 }}>
-      <Box display='flex' flexDirection='row' justifyContent='space-between' sx={{mb:2}}>
-        <Typography variant="h4">My Cart</Typography>
-        <Button onClick={() => clearCart()}>Clear Cart</Button>
-      </Box>      
-      {cartItems.length ?(<Box display='flex' flexDirection="column" gap={4}>
+  const renderCartItems = () => (
+<Box display='flex' flexDirection="column" gap={4}>
       {cartItems.map((item) =>(
         <Box
          display='flex' flexDirection='row' justifyContent= 'space-between' alignItems='center' sx={{border:1,borderColor: '#f2f2f2', borderRadius:5, padding:1}}>
@@ -49,10 +47,25 @@ const CartPage = () => {
           </ButtonGroup>
          </Box>
       ) )}
-      <Box>
+      <Box display="flex" flexDirection="row" justifyContent="space-between">
         <Typography variant="h4">Total Amount : {totalAmount.toFixed(2)}DT</Typography>
-      </Box>
-      </Box>) :( <Typography>Cart Is Empty, Please Start Shopping And Add Items First</Typography>)}
+        <Button variant="contained" onClick={handleCheckOut}>Go To Checkout</Button>
+      </Box>  
+      </Box>  
+  )
+
+  return (
+    <Container fixed sx={{ mt: 2 }}>
+      <Box display='flex' flexDirection='row' justifyContent='space-between' sx={{mb:2}}>
+        <Typography variant="h4">My Cart</Typography>
+        <Button onClick={() => clearCart()}>Clear Cart</Button>
+      </Box>      
+      {cartItems.length ?(
+       renderCartItems() 
+    ) :(
+       <Typography> 
+       Cart Is Empty, Please Start Shopping And Add Items First
+      </Typography>)}
     </Container>
   );
 };
