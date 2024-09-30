@@ -10,13 +10,16 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import { useAuth } from '../context/Auth/AuthContext';
-import { Button, Grid } from '@mui/material';
+import { Badge, Button, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/Cart/CartContext';
 
 
 function Navbar() {
-  const {username, isAuthenticated} = useAuth();
+  const {username, isAuthenticated,logout} = useAuth();
+  const {cartItems} = useCart();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
   const navigate = useNavigate()
@@ -33,7 +36,17 @@ function Navbar() {
 
   const handleLogin = () => {
     navigate("/login") 
+  }
 
+
+  const handleLogout = ()=> {
+    logout();
+    navigate('');
+    handleCloseUserMenu();
+  }
+
+  const handleCart =() => {
+    navigate('/cart')
   }
 
   return (
@@ -41,7 +54,10 @@ function Navbar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
             <Box sx={{display: "flex", flexDirection: "row", justifyContent: "space-between",alignItems:"center" ,width: "100%"}}>
+            <Button variant='text' sx={{color:'#fff'}} onClick={() => navigate("/")}>
             <Box sx= {{display: "flex", flexDirection:"row", alignItems:"center"}}>
+
+
           <AdbIcon sx={{ display: 'flex', mr: 1 }} />
           <Typography
             variant="h6"
@@ -57,8 +73,20 @@ function Navbar() {
             Tech Store
           </Typography>
           </Box>
+          </Button>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box
+              gap={4}
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="center"
+            >
+           <IconButton aria-label="cart"  onClick={handleCart}>
+                <Badge badgeContent={cartItems.length} color="secondary">
+                  <ShoppingCart sx= {{color:'#ffffff'}} />
+                </Badge>
+              </IconButton>
             {isAuthenticated ?<>
               <Tooltip title="Open settings">
              <Grid container alignItems="Center" justifyContent="center" gap={2}>
@@ -92,7 +120,7 @@ function Navbar() {
                   <Typography sx={{ textAlign: 'center' }}>My orders</Typography>
                 </MenuItem>
 
-                <MenuItem onClick={handleCloseUserMenu}>
+                <MenuItem onClick={handleLogout}>
                   <Typography sx={{ textAlign: 'center' }}>Logout</Typography>
                 </MenuItem>
 
