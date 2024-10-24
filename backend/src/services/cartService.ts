@@ -204,6 +204,9 @@ interface Checkout {
   userId: string;
   address: string;
 }
+
+
+
 export const checkout = async ({ userId, address }: Checkout) => {
   if (!address) {
     return { data: "Please add the address", statusCode: 400 };
@@ -237,6 +240,7 @@ export const checkout = async ({ userId, address }: Checkout) => {
     orderItems.push(orderItem);
   }
 
+  console.log(orderItems);
   const order = await orderModel.create({
     orderItems,
     total: cart.totalAmount,

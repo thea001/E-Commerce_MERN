@@ -28,7 +28,7 @@ if ( !email || !password){
 }
 
         //Make the call to api to create the user
-        const response = await fetch (`${BASE_URL}/user/register`,{
+        const response = await fetch (`${BASE_URL}/user/login`,{
             method:"POST",
             headers: {
                 'content-Type' : 'application/json'

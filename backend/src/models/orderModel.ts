@@ -12,7 +12,7 @@ export interface IOrder extends Document {
     orderItems: IOrderItem[];
     total: number;
     address: string;
-    user: ObjectId | string;
+    userId : ObjectId | string;
 }
 
 
@@ -27,7 +27,7 @@ const OrderSchema = new Schema <IOrder>({
     orderItems:[orderItemSchema],
     total: {type: Number, required:true},
     address: {type: String, required:true},
-    user: {type: Schema.Types.ObjectId,ref: "User", required:true},
+    userId: {type:Schema.Types.ObjectId,ref:"User",required:true},
 });
 
 

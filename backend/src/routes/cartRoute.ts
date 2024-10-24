@@ -82,20 +82,34 @@ router.delete("/items/:productId", validateJwt, async (req: ExtendRequest, res)=
 
 })
 
-router.post("/checkout", validateJwt, async (req: ExtendRequest, res)=>{
-
+router.post("/checkout", validateJwt, async (req: ExtendRequest, res) => {
     try {
         const userId = req?.user?._id;
-        const {address} = req.body;
-        const response = await checkout({ userId, address })
-        res.status(response.statusCode).send(response.data);
-    } catch (err){
-        res.status(500).send("Something went wrong !")
+        const { address } = req.body;
 
+        // Log the request body to make sure the data is received
+        console.log("Checkout request received:", { userId, address });
+
+        // If the address is missing, respond with a 400 status
+        if (!address) {
+            return res.status(400).send("Address is required for checkout.");
+        }
+
+        const response = await checkout({ userId, address });
+
+        // Check if the service returned an error
+        if (response.statusCode !== 200) {
+            return res.status(response.statusCode).send(response.data);
+        }
+
+        // Send the success response
+        res.status(200).send(response.data);
+    } catch (err) {
+        // Log the error for troubleshooting
+        console.error("Error during checkout:", err);
+        res.status(500).send("Something went wrong on the server!");
     }
-
-
-})
+});
 
 
 

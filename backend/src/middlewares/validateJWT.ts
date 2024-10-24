@@ -13,7 +13,7 @@ const validateJwt = ( req: ExtendRequest, res: Response, next:NextFunction) => {
         res.status(403).send("Authorization header was not provided");
         return;
     }
-
+    console.log(authorizationHeader.split(" "));
     const token = authorizationHeader.split(" ")[1];
 
 
@@ -21,12 +21,14 @@ const validateJwt = ( req: ExtendRequest, res: Response, next:NextFunction) => {
         res.status(403).send("Bearer token not found");
         return;
     }
-
+    
     jwt.verify(token, process.env.JWT_SECRET||"", async (err,payload) => {
         if(err) {
             res.status(403).send("Invalid Token");
+            
             return;
         }
+        
 
         if(!payload) {
             res.status(403).send("invalid Payload");
