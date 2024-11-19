@@ -205,8 +205,6 @@ interface Checkout {
   address: string;
 }
 
-
-
 export const checkout = async ({ userId, address }: Checkout) => {
   if (!address) {
     return { data: "Please add the address", statusCode: 400 };
@@ -219,12 +217,6 @@ export const checkout = async ({ userId, address }: Checkout) => {
   // Loop cartItems and create orderItems
   for (const item of cart.items) {
     const product = await productModel.findById(item.product);
-
-
-
-
-
-
 
     if (!product) {
       return { data: "Product not found", statusCode: 400 };
