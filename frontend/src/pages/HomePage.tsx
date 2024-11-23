@@ -1,32 +1,50 @@
 import { useEffect, useState } from "react";
 import { Product } from "../types/Product";
 import { BASE_URL } from "../constants/baseUrl";
-import { Box } from "@mui/material";
 import { useCart } from "../context/Cart/CartContext";
+import { Category } from "../types/Category";
 
 const HomePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [error, setError] = useState(false);
   const { addItemToCart } = useCart();
+
+  // Fetch categories
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/categories/all`);
+      const data = await response.json();
+      setCategories(data);
+    } catch {
+      setError(true);
+    }
+  };
+
+  // Fetch products by category
+  const fetchProducts = async (categoryId?: string) => {
+    try {
+      const url = categoryId
+        ? `${BASE_URL}/product/by-category/${categoryId}`
+        : `${BASE_URL}/product/all`;
+      const response = await fetch(url);
+      const data = await response.json();
+      setProducts(data);
+    } catch {
+      setError(true);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/product`);
-        const data = await response.json();
-        setProducts(data);
-      } catch {
-        setError(true);
-      }
-    };
-    fetchData();
-    const script = document.createElement("script");
-    script.src = "./assets/js/slick.min.js";
-    script.async = true;
+    fetchCategories();
+    fetchProducts(); // Fetch all products initially
   }, []);
 
-  if (error) {
-    return <Box>Something went wrong, please try again!</Box>;
-  }
+  const handleCategoryClick = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    fetchProducts(categoryId); // Fetch products by the selected category
+  };
 
   return (
     <div className="section">
@@ -35,21 +53,26 @@ const HomePage = () => {
           {/* Section title */}
           <div className="col-md-12">
             <div className="section-title">
-              <h3 className="title">New Products</h3>
+              <h3 className="title">Products</h3>
               <div className="section-nav">
                 <ul className="section-tab-nav tab-nav">
-                  <li className="active">
-                    <a href="#tab1">Laptops</a>
+                  <li
+                    className={!selectedCategory ? "active" : ""}
+                    onClick={() => handleCategoryClick("")}
+                  >
+                    <a href="#">All</a>
                   </li>
-                  <li>
-                    <a href="#tab1">Smartphones</a>
-                  </li>
-                  <li>
-                    <a href="#tab1">Cameras</a>
-                  </li>
-                  <li>
-                    <a href="#tab1">Accessories</a>
-                  </li>
+                  {categories.map((category) => (
+                    <li
+                      key={category._id}
+                      className={
+                        selectedCategory === category._id ? "active" : ""
+                      }
+                      onClick={() => handleCategoryClick(category._id)}
+                    >
+                      <a href="#">{category.name}</a>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -57,9 +80,8 @@ const HomePage = () => {
           {/* /section title */}
 
           {/* Products display */}
-
-          <div className="row ">
-            <div className="products-tabs ">
+          <div className="row">
+            <div className="products-tabs">
               <div id="tab1" className="active">
                 <div className="row p-3">
                   {/* Loop through products */}
@@ -68,8 +90,8 @@ const HomePage = () => {
                       key={product._id}
                       className="col-lg-3 col-md-4 col-12 p-3"
                     >
-                      <div className="product ">
-                        <div className="product-img   p-0 m-0">
+                      <div className="product">
+                        <div className="product-img p-0 m-0">
                           <img
                             height={200}
                             src={product.image}
@@ -77,7 +99,9 @@ const HomePage = () => {
                           />
                         </div>
                         <div className="product-body">
-                          <p className="product-category">{product.category}</p>
+                          <p className="product-category">
+                            {product.category?.name || "Uncategorized"}
+                          </p>
                           <h3 className="product-name">
                             <a href="#">{product.title}</a>
                           </h3>

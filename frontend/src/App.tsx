@@ -11,6 +11,13 @@ import CheckoutPage from "./pages/CheckoutPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
 import MyordersPage from "./pages/MyordersPage";
 import Footer from "./pages/Footer";
+import UsersList from "./pages/UsersList";
+import EditUserForm from "./pages/EditUserFrom";
+import CategoryList from "./pages/CategoryList";
+import AddCategory from "./pages/AddCategory";
+import ProductList from "./pages/ProductList";
+import EditProduct from "./pages/editProduct";
+import AddProduct from "./pages/AddProduct";
 
 function App() {
   return (
@@ -27,6 +34,13 @@ function App() {
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/order-success" element={<OrderSuccessPage />} />
               <Route path="/my-orders" element={<MyordersPage />} />
+              <Route path="/users-list" element={<UsersList />} />
+              <Route path="/user-edit/:id" element={<EditUserForm />} />
+              <Route path="/category-list" element={<CategoryList />} />
+              <Route path="/add-category" element={<AddCategory />} />
+              <Route path="/product-list" element={<ProductList />} />
+              <Route path="/product-edit/:id" element={<EditProduct />} />
+              <Route path="/add-product" element={<AddProduct />} />
             </Route>
           </Routes>
           <Footer />

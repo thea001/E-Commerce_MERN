@@ -1,17 +1,16 @@
-import { CheckCircleOutline } from "@mui/icons-material";
-import { Box, Button, Container, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Box, Container, Typography } from "@mui/material";
+
 import { useAuth } from "../context/Auth/AuthContext";
 import { useEffect } from "react";
 
 const MyordersPage = () => {
-  const {getMyOrders,myOrders} = useAuth();
+  const { getMyOrders, myOrders } = useAuth();
 
-  useEffect(() =>{
-    getMyOrders()
+  useEffect(() => {
+    getMyOrders();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Container
@@ -25,14 +24,15 @@ const MyordersPage = () => {
         gap: 2,
       }}
     >
-     {myOrders.map(({address,orderItems,total})=>(
-        <Box sx={{border:1,borderColor:"gray",borderRadius:2,padding:1}}>
-        
-        <Typography>Address: {address}</Typography>
-        <Typography>Items: {orderItems.length}</Typography>
-        <Typography>Total: {total}</Typography>
+      {myOrders.map(({ address, orderItems, total }) => (
+        <Box
+          sx={{ border: 1, borderColor: "gray", borderRadius: 2, padding: 1 }}
+        >
+          <Typography>Address: {address}</Typography>
+          <Typography>Items: {orderItems.length}</Typography>
+          <Typography>Total: {total}</Typography>
         </Box>
-     ))}
+      ))}
     </Container>
   );
 };

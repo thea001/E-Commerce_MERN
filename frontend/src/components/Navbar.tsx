@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/Cart/CartContext";
 import logo from "../assets/img/logo.png";
 function Navbar() {
-  const { username, isAuthenticated, logout } = useAuth();
+  const { role, isAuthenticated, logout } = useAuth();
   const { cartItems, removeItemInCart } = useCart();
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
@@ -35,7 +35,10 @@ function Navbar() {
   };
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const subTotal = cartItems.reduce((sum, item) => sum + item.unitPrice, 0);
+  const subTotal = cartItems.reduce(
+    (sum1, item) => sum1 + item.unitPrice * item.quantity,
+    0
+  );
 
   const handleLogout = () => {
     logout();
@@ -228,29 +231,62 @@ function Navbar() {
           {/* responsive-nav */}
           <div id="responsive-nav">
             {/* NAV */}
-            <ul className="d-flex flex-row main-nav nav navbar-nav">
-              <li className="active">
-                <a href="#">Home</a>
-              </li>
-              <li>
-                <a href="#">Hot Deals</a>
-              </li>
-              <li>
-                <a href="#">Categories</a>
-              </li>
-              <li>
-                <a href="#">Laptops</a>
-              </li>
-              <li>
-                <a href="#">Smartphones</a>
-              </li>
-              <li>
-                <a href="#">Cameras</a>
-              </li>
-              <li>
-                <a href="#">Accessories</a>
-              </li>
-            </ul>
+            {role == "USER" ? (
+              /* <ul className="d-flex flex-row main-nav nav navbar-nav">
+                <li className="active">
+                  <a href="#">Home</a>
+                </li>
+                <li>
+                  <a href="#">Hot Deals</a>
+                </li>
+                <li>
+                  <a href="#">Categories</a>
+                </li>
+                <li>
+                  <a href="#">Laptops</a>
+                </li>
+                <li>
+                  <a href="#">Smartphones</a>
+                </li>
+                <li>
+                  <a href="#">Cameras</a>
+                </li>
+                <li>
+                  <a href="#">Accessories</a>
+                </li>
+              </ul>
+            */ <p></p>
+            ) : (
+              <ul className="d-flex flex-row main-nav nav navbar-nav">
+                <li>
+                  <a
+                    onClick={() => {
+                      navigate("users-list");
+                    }}
+                  >
+                    Users List
+                  </a>
+                </li>
+                <li>
+                  <a
+                    onClick={() => {
+                      navigate("category-list");
+                    }}
+                  >
+                    Categories List
+                  </a>
+                </li>
+                <li>
+                  <a
+                    onClick={() => {
+                      navigate("product-list");
+                    }}
+                  >
+                    Product List
+                  </a>
+                </li>
+              </ul>
+            )}
             {/* /NAV */}
           </div>
           {/* /responsive-nav */}

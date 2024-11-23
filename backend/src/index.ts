@@ -6,6 +6,7 @@ import { seedInitialProducts } from "./services/productService";
 import productRoute from "./routes/productRoute";
 import cartRoute from "./routes/cartRoute";
 import cors from "cors";
+import categoryRoutes from "./routes/categoryRoutes";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ seedInitialProducts();
 app.use("/user", userRoute);
 app.use("/product", productRoute);
 app.use("/cart", cartRoute);
+app.use("/categories", categoryRoutes);
 
 app.listen(port, () => {
   console.log(`Server is runing at : http://localhost:${port}`);

@@ -1,5 +1,12 @@
 import express, { response } from "express";
-import { getMyOrders, login, register } from "../services/userService";
+import {
+  getAll,
+  getById,
+  getMyOrders,
+  login,
+  register,
+  update,
+} from "../services/userService";
 import validateJwt from "../middlewares/validateJWT";
 import { ExtendRequest } from "../types/extendedRequest";
 
@@ -43,5 +50,40 @@ router.get(
     }
   }
 );
+
+router.get("/all", validateJwt, async (request: ExtendRequest, response) => {
+  try {
+    const { statusCode, data } = await getAll();
+    response.status(statusCode).send(data);
+  } catch (err) {
+    response.status(500).send("Something went Wrong");
+  }
+});
+
+router.get(
+  "/byId/:id",
+  validateJwt,
+  async (request: ExtendRequest, response) => {
+    try {
+      const { id } = request.params;
+      const { statusCode, data } = await getById(id);
+      response.status(statusCode).send(data);
+    } catch (err) {
+      response.status(500).send("Something went Wrong");
+    }
+  }
+);
+
+router.post("/update/:id", async (request, response) => {
+  try {
+    const { id } = request.params;
+    const { statusCode, data } = await update(request.body, id);
+    console.log(request.body);
+    response.status(statusCode).json(data);
+  } catch (error) {
+    console.log(error);
+    response.status(500).send("Something Went Wrong !");
+  }
+});
 
 export default router;

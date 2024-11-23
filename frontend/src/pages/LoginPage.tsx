@@ -36,15 +36,15 @@ const LoginPage = () => {
     if (!response.ok) {
       setError("Unable to Login User, please try difference creadientials !");
     }
-
-    const token = await response.json();
-
+    const data = await response.json();
+    const token = data.token;
+    const role = data.role;
     if (!token) {
       setError("Incorrect token");
       return;
     }
 
-    login(email, token);
+    login(email, token, role);
     if (token) navigate("/");
   };
 
@@ -90,6 +90,15 @@ const LoginPage = () => {
 
         {/* Error Message */}
         {error && <p style={{ color: "red", marginTop: "8px" }}>{error}</p>}
+        <a
+          className="text-underline link text-danger text-center mt-5 cursor-pointer"
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            navigate("/register");
+          }}
+        >
+          Dont have account ?
+        </a>
       </div>
     </div>
   );

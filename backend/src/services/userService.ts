@@ -9,6 +9,24 @@ interface RegisterParams {
   email: string;
   password: string;
 }
+export const getAll = async () => {
+  const listUsers = await userModel.find({});
+  return { data: listUsers, statusCode: 200 };
+};
+
+export const getById = async (id: string) => {
+  const listUsers = await userModel.find({ _id: id });
+  return { data: listUsers, statusCode: 200 };
+};
+
+export const update = async (updateData: any, id: string) => {
+  const updatedUser = await userModel.findOneAndUpdate(
+    { _id: id }, // Filter by ID
+    { $set: updateData }, // Update the fields
+    { new: true } // Return the updated document
+  );
+  return { data: updatedUser, statusCode: 200 };
+};
 
 export const register = async ({
   firstName,
@@ -27,6 +45,7 @@ export const register = async ({
     password: hashPassword,
     firstName,
     lastName,
+    role: "CLIENT",
   });
   await newUser.save();
 
@@ -49,11 +68,14 @@ export const login = async ({ email, password }: LoginParams) => {
 
   if (passwordMatch) {
     return {
-      data: generateJWT({
-        email,
-        firstName: findUser.firstName,
-        lastName: findUser.lastName,
-      }),
+      data: {
+        token: generateJWT({
+          email,
+          firstName: findUser.firstName,
+          lastName: findUser.lastName,
+        }),
+        role: findUser.role,
+      },
       statusCode: 200,
     };
   }

@@ -44,7 +44,7 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
           title: product.title,
           image: product.image,
           quantity,
-          unitPrice: product.price,
+          unitPrice,
         })
       );
       setCartItems(cartItemsMapped);
